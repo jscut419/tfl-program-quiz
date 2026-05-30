@@ -416,14 +416,6 @@ body::before {
   .quiz-wrapper { padding: 28px 20px 60px; }
 }
 </style>
-<!-- Meta Pixel Code -->
-<script>
-!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
-fbq('init','4176336189248358');
-fbq('track','PageView');
-</script>
-<noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=4176336189248358&ev=PageView&noscript=1"/></noscript>
-<!-- End Meta Pixel Code -->
 </head>
 <body>
 <div class="quiz-wrapper">
@@ -991,7 +983,7 @@ fbq('track','PageView');
     var daysLabels = ['1-2 days','3 days','4 days','5-6 days'];
     var locationLabels = ['At home','At the gym','Both'];
     var experienceLabels = ['Just getting started','I know the basics','Pretty experienced'];
-    var obstacleLabels = ['I never have enough time','I keep starting over','I don't know what to do','Life just keeps happening'];
+    var obstacleLabels = ['I never have enough time','I keep starting over',"I don't know what to do",'Life just keeps happening'];
 
     var nameVal = document.getElementById('name-input').value.trim();
     if (!nameVal) return;
@@ -1059,7 +1051,7 @@ fbq('track','PageView');
       var daysLabels = ['1-2 days','3 days','4 days','5-6 days'];
       var locationLabels = ['At home','At the gym','Both'];
       var experienceLabels = ['Just getting started','I know the basics','Pretty experienced'];
-      var obstacleLabels = ['I never have enough time','I keep starting over','I don't know what to do','Life just keeps happening'];
+      var obstacleLabels = ['I never have enough time','I keep starting over',"I don't know what to do",'Life just keeps happening'];
 
       var prog = document.getElementById('r-program').textContent || '';
       var firstName = answers[6] || '';
@@ -1101,5 +1093,13 @@ fbq('track','PageView');
 
 })();
 </script>
+<!-- Meta Pixel Code -->
+<script>
+!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
+fbq('init','4176336189248358');
+fbq('track','PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=4176336189248358&ev=PageView&noscript=1"/></noscript>
+<!-- End Meta Pixel Code -->
 </body>
 </html>
