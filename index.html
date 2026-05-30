@@ -416,6 +416,14 @@ body::before {
   .quiz-wrapper { padding: 28px 20px 60px; }
 }
 </style>
+<!-- Meta Pixel Code -->
+<script>
+!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
+fbq('init','4176336189248358');
+fbq('track','PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=4176336189248358&ev=PageView&noscript=1"/></noscript>
+<!-- End Meta Pixel Code -->
 </head>
 <body>
 <div class="quiz-wrapper">
@@ -978,6 +986,13 @@ body::before {
 
   // ─── SHOW RESULT ───────────────────────────────────────
   function showResult() {
+    var goalLabels = ['Get stronger','Lose fat & tone up','Just move consistently','Build muscle & improve how I look'];
+    var genderLabels = ['Man','Woman'];
+    var daysLabels = ['1-2 days','3 days','4 days','5-6 days'];
+    var locationLabels = ['At home','At the gym','Both'];
+    var experienceLabels = ['Just getting started','I know the basics','Pretty experienced'];
+    var obstacleLabels = ['I never have enough time','I keep starting over','I don't know what to do','Life just keeps happening'];
+
     var nameVal = document.getElementById('name-input').value.trim();
     if (!nameVal) return;
     answers[6] = nameVal;
@@ -1014,10 +1029,75 @@ body::before {
     var resultScreen = document.getElementById('result-screen');
     resultScreen.classList.add('active');
     window.scrollTo(0, 0);
+
+    // Fire Meta pixel QuizCompleted event
+    if (typeof fbq !== 'undefined') {
+      fbq('trackCustom', 'QuizCompleted', {
+        program: prog,
+        goal: answers[0] !== null ? goalLabels[answers[0]] : '',
+        gender: answers[1] !== null ? genderLabels[answers[1]] : '',
+        days: answers[2] !== null ? daysLabels[answers[2]] : '',
+        location: answers[3] !== null ? locationLabels[answers[3]] : '',
+        experience: answers[4] !== null ? experienceLabels[answers[4]] : '',
+        obstacle: answers[5] !== null ? obstacleLabels[answers[5]] : ''
+      });
+    }
   }
 
   // ─── INIT ──────────────────────────────────────────────
   updateProgress(0);
+
+  // ─── EMAIL SUBMIT → HUBSPOT ────────────────────────────
+  var emailSubmitBtn = document.getElementById('email-submit');
+  if (emailSubmitBtn) {
+    emailSubmitBtn.addEventListener('click', function() {
+      var email = document.getElementById('email-capture').value.trim();
+      if (!email || email.indexOf('@') === -1) return;
+
+      var goalLabels = ['Get stronger','Lose fat & tone up','Just move consistently','Build muscle & improve how I look'];
+      var genderLabels = ['Man','Woman'];
+      var daysLabels = ['1-2 days','3 days','4 days','5-6 days'];
+      var locationLabels = ['At home','At the gym','Both'];
+      var experienceLabels = ['Just getting started','I know the basics','Pretty experienced'];
+      var obstacleLabels = ['I never have enough time','I keep starting over','I don't know what to do','Life just keeps happening'];
+
+      var prog = document.getElementById('r-program').textContent || '';
+      var firstName = answers[6] || '';
+
+      var payload = {
+        fields: [
+          { name: 'email', value: email },
+          { name: 'firstname', value: firstName },
+          { name: 'quiz_goal', value: answers[0] !== null ? goalLabels[answers[0]] : '' },
+          { name: 'quiz_gender', value: answers[1] !== null ? genderLabels[answers[1]] : '' },
+          { name: 'quiz_days', value: answers[2] !== null ? daysLabels[answers[2]] : '' },
+          { name: 'quiz_location', value: answers[3] !== null ? locationLabels[answers[3]] : '' },
+          { name: 'quiz_experience', value: answers[4] !== null ? experienceLabels[answers[4]] : '' },
+          { name: 'quiz_obstacle', value: answers[5] !== null ? obstacleLabels[answers[5]] : '' },
+          { name: 'quiz_program', value: prog }
+        ],
+        context: {
+          pageUri: 'https://quiz.fitnessleagueapp.com',
+          pageName: 'TFL Program Quiz'
+        }
+      };
+
+      fetch('https://api.hsforms.com/submissions/v3/integration/submit/244705349/1339b7c9-7f6e-4b30-8528-deb373776299', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      })
+      .then(function() {
+        document.getElementById('email-row').style.display = 'none';
+        document.getElementById('email-success').style.display = 'block';
+      })
+      .catch(function(err) {
+        document.getElementById('email-row').style.display = 'none';
+        document.getElementById('email-success').style.display = 'block';
+        console.error('HubSpot submission error:', err);
+      });
+    });
+  }
 
 })();
 </script>
