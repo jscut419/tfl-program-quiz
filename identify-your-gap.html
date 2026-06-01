@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Identify Your Gap — The Fitness League</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter+Tight:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --navy:#0b1120;
+  --navy-mid:#111827;
+  --navy-light:#1a2333;
+  --gold:#f5af2d;
+  --gold-dim:rgba(245,175,45,0.1);
+  --gold-border:rgba(245,175,45,0.2);
+  --teal:#09d0bb;
+  --teal-dim:rgba(9,208,187,0.08);
+  --white:#ffffff;
+  --text-muted:rgba(255,255,255,0.55);
+  --text-dim:rgba(255,255,255,0.28);
+  --border:rgba(255,255,255,0.07);
+  --border-gold:rgba(245,175,45,0.18);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:'Inter Tight',sans-serif;background:var(--navy);color:var(--white);-webkit-font-smoothing:antialiased;overflow-x:hidden;min-height:100vh;}
+.display{font-family:'Archivo Black',sans-serif;}
+
+/* ── NAV ─────────────────────────────────────────────────────────────────── */
+nav{position:sticky;top:0;z-index:200;background:rgba(11,17,32,0.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:0 48px;height:64px;display:flex;align-items:center;justify-content:space-between;}
+.nav-brand{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.nav-wordmark{font-family:'Archivo Black',sans-serif;font-size:14px;color:var(--white);letter-spacing:0.3px;white-space:nowrap;}
+.nav-cta{background:var(--gold);color:var(--navy);font-size:12px;font-weight:700;letter-spacing:0.5px;padding:10px 22px;border-radius:6px;text-decoration:none;transition:all .2s;white-space:nowrap;}
+.nav-cta:hover{background:#f7bc45;transform:translateY(-1px);}
+
+/* ── PROGRESS BAR ─────────────────────────────────────────────────────────── */
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--gold),var(--teal));z-index:1000;width:0%;transition:width 0.2s ease;}
+
+/* ── QUIZ SHELL ───────────────────────────────────────────────────────────── */
+.quiz-shell{min-height:calc(100vh - 64px);display:flex;align-items:center;justify-content:center;padding:48px 24px 80px;}
+.quiz-panel{width:100%;max-width:640px;}
+
+/* ── INTRO ────────────────────────────────────────────────────────────────── */
+.intro-screen{text-align:center;}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;color:var(--teal);border:1px solid rgba(9,208,187,0.22);padding:7px 16px;border-radius:20px;margin-bottom:28px;}
+.badge-dot{width:6px;height:6px;border-radius:50%;background:var(--teal);animation:pulse 2s ease-in-out infinite;}
+.intro-headline{font-family:'Archivo Black',sans-serif;font-size:clamp(40px,7vw,68px);line-height:1.0;letter-spacing:-2px;color:var(--white);margin-bottom:20px;}
+.intro-headline .gold{color:var(--gold);}
+.intro-sub{font-size:17px;color:var(--text-muted);line-height:1.75;margin-bottom:12px;max-width:500px;margin-left:auto;margin-right:auto;}
+.intro-sub strong{color:var(--white);}
+.intro-sub-2{font-size:15px;color:var(--text-dim);line-height:1.7;margin-bottom:40px;max-width:460px;margin-left:auto;margin-right:auto;}
+.btn-primary{display:inline-block;background:var(--gold);color:var(--navy);font-family:'Archivo Black',sans-serif;font-size:16px;letter-spacing:0.2px;padding:18px 52px;border-radius:8px;text-decoration:none;border:none;cursor:pointer;transition:all .2s;box-shadow:0 8px 40px rgba(245,175,45,0.3);}
+.btn-primary:hover{background:#f7bc45;transform:translateY(-2px);box-shadow:0 16px 50px rgba(245,175,45,0.4);}
+.intro-fine{font-size:12px;color:var(--text-dim);margin-top:14px;}
+.intro-fine span{color:var(--teal);}
+
+/* ── PIP TRACK ────────────────────────────────────────────────────────────── */
+.pip-track{display:flex;gap:5px;margin-bottom:36px;}
+.pip{flex:1;height:3px;border-radius:2px;background:var(--border);transition:background 0.3s;}
+.pip.done{background:var(--gold);}
+.pip.active{background:rgba(245,175,45,0.35);}
+
+/* ── QUESTION ─────────────────────────────────────────────────────────────── */
+.question-screen{display:none;}
+.question-screen.active{display:block;}
+.q-counter{font-size:11px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--text-dim);margin-bottom:14px;}
+.q-text{font-family:'Archivo Black',sans-serif;font-size:clamp(20px,4vw,28px);line-height:1.2;letter-spacing:-0.5px;color:var(--white);margin-bottom:28px;}
+
+.opts{display:flex;flex-direction:column;gap:10px;margin-bottom:32px;}
+.opt{background:var(--navy-light);border:1px solid var(--border);border-radius:12px;padding:16px 20px;cursor:pointer;transition:all 0.18s;text-align:left;width:100%;color:rgba(255,255,255,0.75);font-family:'Inter Tight',sans-serif;font-size:15px;font-weight:400;line-height:1.55;position:relative;overflow:hidden;}
+.opt::before{content:'';position:absolute;inset:0;background:var(--gold-dim);opacity:0;transition:opacity 0.18s;}
+.opt:hover{border-color:var(--border-gold);transform:translateX(4px);color:var(--white);}
+.opt:hover::before{opacity:1;}
+.opt.selected{border-color:var(--gold);color:var(--white);}
+.opt.selected::before{opacity:1;}
+
+.q-nav{display:flex;align-items:center;justify-content:space-between;}
+.btn-back{background:none;border:none;color:var(--text-dim);font-size:13px;font-family:'Inter Tight',sans-serif;font-weight:500;cursor:pointer;padding:10px 0;display:flex;align-items:center;gap:6px;transition:color 0.2s;letter-spacing:0.5px;}
+.btn-back:hover{color:var(--white);}
+.btn-next{background:var(--gold);color:var(--navy);font-family:'Archivo Black',sans-serif;font-size:14px;letter-spacing:0.3px;padding:14px 32px;border-radius:8px;border:none;cursor:pointer;transition:all .2s;opacity:0.28;pointer-events:none;}
+.btn-next.on{opacity:1;pointer-events:all;}
+.btn-next.on:hover{background:#f7bc45;transform:translateY(-1px);}
+
+/* ── NAME ─────────────────────────────────────────────────────────────────── */
+.name-screen{display:none;text-align:center;}
+.name-screen.active{display:block;}
+.name-headline{font-family:'Archivo Black',sans-serif;font-size:clamp(26px,4vw,36px);color:var(--white);margin-bottom:10px;letter-spacing:-0.5px;}
+.name-sub{font-size:15px;color:var(--text-muted);margin-bottom:32px;line-height:1.65;max-width:400px;margin-left:auto;margin-right:auto;}
+.name-input{width:100%;background:var(--navy-light);border:1px solid var(--border);border-radius:10px;padding:18px 22px;font-family:'Archivo Black',sans-serif;font-size:22px;color:var(--white);outline:none;transition:border-color 0.2s;text-align:center;letter-spacing:0.3px;}
+.name-input::placeholder{color:var(--text-dim);font-family:'Inter Tight',sans-serif;font-size:17px;font-weight:300;letter-spacing:0;}
+.name-input:focus{border-color:var(--gold);}
+.name-actions{display:flex;flex-direction:column;align-items:center;gap:12px;margin-top:22px;}
+.btn-reveal{background:var(--gold);color:var(--navy);font-family:'Archivo Black',sans-serif;font-size:16px;padding:18px 52px;border-radius:8px;border:none;cursor:pointer;transition:all .2s;box-shadow:0 8px 40px rgba(245,175,45,0.3);opacity:0.28;pointer-events:none;letter-spacing:0.2px;}
+.btn-reveal.on{opacity:1;pointer-events:all;}
+.btn-reveal.on:hover{background:#f7bc45;transform:translateY(-2px);}
+
+/* ── LOADING ──────────────────────────────────────────────────────────────── */
+.loading-screen{display:none;text-align:center;padding-top:32px;}
+.loading-screen.active{display:block;}
+.spinner{width:72px;height:72px;border-radius:50%;border:3px solid var(--border);border-top-color:var(--gold);animation:spin 0.9s linear infinite;margin:0 auto 28px;}
+.loading-headline{font-family:'Archivo Black',sans-serif;font-size:22px;color:var(--white);margin-bottom:8px;letter-spacing:-0.3px;}
+.loading-sub{font-size:14px;color:var(--text-muted);}
+
+/* ── RESULT ───────────────────────────────────────────────────────────────── */
+.result-screen{display:none;}
+.result-screen.active{display:block;animation:fadeUp 0.5s ease both;}
+
+.result-eyebrow{font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim);margin-bottom:10px;}
+.result-greeting{font-family:'Archivo Black',sans-serif;font-size:clamp(13px,2.5vw,16px);color:var(--teal);margin-bottom:4px;letter-spacing:0.5px;}
+.result-gap-label{font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim);margin-bottom:8px;margin-top:8px;}
+.result-gap-name{font-family:'Archivo Black',sans-serif;font-size:clamp(38px,8vw,68px);line-height:1.0;letter-spacing:-2px;color:var(--white);margin-bottom:24px;}
+.result-gap-name .gold{color:var(--gold);}
+
+.result-statement{background:var(--navy-light);border:1px solid var(--border);border-left:3px solid var(--gold);border-radius:0 10px 10px 0;padding:18px 22px;margin-bottom:32px;}
+.result-statement p{font-size:15px;color:var(--text-muted);line-height:1.75;font-style:italic;}
+
+.result-divider{border:none;border-top:1px solid var(--border);margin:32px 0;}
+
+.result-block{margin-bottom:28px;}
+.result-block-label{font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:12px;}
+.result-block-text{font-size:16px;line-height:1.85;color:var(--text-muted);}
+.result-block-text strong{color:var(--white);}
+
+/* CTA BOX */
+.result-cta-box{background:linear-gradient(135deg,rgba(245,175,45,0.06),rgba(9,208,187,0.04));border:1px solid var(--border-gold);border-radius:16px;padding:40px 36px;text-align:center;position:relative;overflow:hidden;margin-top:44px;}
+.result-cta-box::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--gold),var(--teal));}
+.result-cta-eyebrow{font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--teal);margin-bottom:14px;}
+.result-cta-headline{font-family:'Archivo Black',sans-serif;font-size:clamp(20px,3.5vw,28px);color:var(--white);line-height:1.15;letter-spacing:-0.5px;margin-bottom:12px;}
+.result-cta-body{font-size:14px;color:var(--text-muted);line-height:1.75;max-width:420px;margin:0 auto 28px;}
+.result-cta-fine{font-size:12px;color:var(--text-dim);margin-top:12px;}
+.result-cta-fine span{color:var(--teal);}
+
+/* ── KEYFRAMES ────────────────────────────────────────────────────────────── */
+@keyframes spin{to{transform:rotate(360deg);}}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.35;}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+
+/* ── RESPONSIVE ───────────────────────────────────────────────────────────── */
+@media(max-width:600px){
+  nav{padding:0 20px;}
+  .quiz-shell{padding:32px 20px 64px;}
+  .result-cta-box{padding:28px 20px;}
+  .btn-primary,.btn-reveal,.btn-next{width:100%;text-align:center;}
+  .btn-cta-link{width:100%;display:block;text-align:center;}
+}
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="pgbar"></div>
+
+<nav>
+  <a href="https://www.fitnessleagueapp.com" class="nav-brand">
+    <img src="https://cdn.prod.website-files.com/6934896dc906e9db8a0764c8/69348b87bdf8fcb1927c0e0e_TFL%20square%20logo%20(4).png" alt="The Fitness League" style="height:30px;width:auto;"/>
+    <span class="nav-wordmark">The Fitness League</span>
+  </a>
+  <a href="https://plato.fitnessleagueapp.com/register" class="nav-cta">Start Free Trial</a>
+</nav>
+
+<div class="quiz-shell">
+<div class="quiz-panel">
+
+  <!-- ── INTRO ── -->
+  <div id="s-intro" class="intro-screen">
+    <div class="hero-badge"><div class="badge-dot"></div>60 seconds · Free · No account required</div>
+    <h1 class="intro-headline display">What's your <span class="gold">gap?</span></h1>
+    <p class="intro-sub">Most people know something is off. Very few can name exactly what it is. <strong>Without a name, there is no target. Without a target, there is no change.</strong></p>
+    <p class="intro-sub-2">Answer 10 quick questions and we will identify the one gap that is holding everything else back.</p>
+    <button class="btn-primary" id="btn-start">Find My Gap →</button>
+    <p class="intro-fine"><span>Free.</span> No account required. No credit card.</p>
+  </div>
+
+  <!-- ── QUESTION ── -->
+  <div id="s-question" class="question-screen">
+    <div class="pip-track" id="pip-track"></div>
+    <div class="q-counter" id="q-counter"></div>
+    <div class="q-text display" id="q-text"></div>
+    <div class="opts" id="opts"></div>
+    <div class="q-nav">
+      <button class="btn-back" id="btn-back">← Back</button>
+      <button class="btn-next" id="btn-next">Continue →</button>
+    </div>
+  </div>
+
+  <!-- ── NAME ── -->
+  <div id="s-name" class="name-screen">
+    <div class="pip-track" id="name-pip-track"></div>
+    <h2 class="name-headline display">One last thing.</h2>
+    <p class="name-sub">What should we call you? Your result will be written specifically for you.</p>
+    <input class="name-input" type="text" id="name-input" placeholder="First name" autocomplete="given-name" maxlength="40"/>
+    <div class="name-actions">
+      <button class="btn-reveal" id="btn-reveal">Show My Gap →</button>
+      <button class="btn-back" id="name-back" style="color:var(--text-dim);">← Back</button>
+    </div>
+  </div>
+
+  <!-- ── LOADING ── -->
+  <div id="s-loading" class="loading-screen">
+    <div class="spinner"></div>
+    <div class="loading-headline display">Identifying your gap…</div>
+    <div class="loading-sub">Analyzing your answers</div>
+  </div>
+
+  <!-- ── RESULT ── -->
+  <div id="s-result" class="result-screen">
+    <div class="result-eyebrow">Your Gap Has Been Identified</div>
+    <div class="result-greeting" id="r-greeting"></div>
+    <div class="result-gap-label">Your Primary Gap</div>
+    <div class="result-gap-name display" id="r-gap-name"></div>
+    <div class="result-statement"><p id="r-statement"></p></div>
+    <hr class="result-divider"/>
+    <div class="result-block">
+      <div class="result-block-label">What this means</div>
+      <div class="result-block-text" id="r-p1"></div>
+    </div>
+    <div class="result-block">
+      <div class="result-block-label">Why it matters</div>
+      <div class="result-block-text" id="r-p2"></div>
+    </div>
+    <div class="result-block">
+      <div class="result-block-label">What comes next</div>
+      <div class="result-block-text" id="r-p3"></div>
+    </div>
+    <div class="result-cta-box">
+      <div class="result-cta-eyebrow">7-Day Free Trial · No Credit Card Required</div>
+      <div class="result-cta-headline display" id="r-cta-h"></div>
+      <p class="result-cta-body" id="r-cta-b"></p>
+      <a href="https://plato.fitnessleagueapp.com/register" class="btn-primary btn-cta-link">Start My Free Trial →</a>
+      <p class="result-cta-fine"><span>7 days free.</span> No credit card. Cancel anytime.</p>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<script>
+(function(){
+
+/* ── QUESTIONS ──────────────────────────────────────────────────────────── */
+var Qs=[
+  {t:"When you're honest with yourself, what feels most off right now?",o:[
+    {l:"I'm tired all the time and I can't figure out why",g:"E"},
+    {l:"I used to feel sharp and driven. That version of me has gone quiet",g:"V"},
+    {l:"I give everything to everyone else and there's nothing left for me",g:"F"},
+    {l:"I used to be active and fit. I don't recognize that person anymore",g:"I"},
+    {l:"I've lost confidence in how I look and feel in my own body",g:"C"},
+    {l:"I keep starting over and I'm running out of belief that I can stick to anything",g:"S"}
+  ]},
+  {t:"Which moment hits closest to home?",o:[
+    {l:"The 3pm wall. Every single day, like clockwork",g:"E"},
+    {l:"Catching myself holding back in a situation I would have owned five years ago",g:"V"},
+    {l:"Finally having a moment to myself and being too depleted to even want anything",g:"F"},
+    {l:"Seeing an old photo of myself and feeling something I can't quite name",g:"I"},
+    {l:"Avoiding something — a mirror, an event, a photo — because of how I feel about myself",g:"C"},
+    {l:"Starting strong, then something happens, and I'm back at square one",g:"S"}
+  ]},
+  {t:"What has this cost you most?",o:[
+    {l:"My ability to get through the day without running on caffeine and willpower",g:"E"},
+    {l:"The edge I used to have — at work, in my relationship, in how I carry myself",g:"V"},
+    {l:"Feeling like myself outside of my responsibilities",g:"F"},
+    {l:"The physical confidence I had when I was consistently active",g:"I"},
+    {l:"Feeling attractive and at home in my own body",g:"C"},
+    {l:"The ability to trust myself to follow through on something",g:"S"}
+  ]},
+  {t:"Which of these sounds most like something you've said to yourself recently?",o:[
+    {l:"\"I don't know why I'm so tired. I'm doing everything right.\"",g:"E"},
+    {l:"\"I'm still showing up everywhere else. But something's different.\"",g:"V"},
+    {l:"\"I love my life. I just wish I had something that was mine.\"",g:"F"},
+    {l:"\"I need to get back to who I used to be.\"",g:"I"},
+    {l:"\"I just don't feel like myself anymore.\"",g:"C"},
+    {l:"\"I'll start again Monday.\"",g:"S"}
+  ]},
+  {t:"When you've tried to fix this before, what happened?",o:[
+    {l:"I tried sleeping more, cutting caffeine, taking supplements. Still tired.",g:"E"},
+    {l:"I started training but couldn't sustain it. The drive just wasn't there.",g:"V"},
+    {l:"I carved out time for myself but felt guilty the whole time.",g:"F"},
+    {l:"I got going for a few weeks then stopped. That version of me felt further away.",g:"I"},
+    {l:"I tried working out but couldn't get past how I felt about myself to stay consistent.",g:"C"},
+    {l:"I've started more times than I can count. Good stretch, then life happens, then zero.",g:"S"}
+  ]},
+  {t:"How would you describe your relationship with your body right now?",o:[
+    {l:"We're not on speaking terms. It won't give me the energy I need.",g:"E"},
+    {l:"It's changed in ways I didn't choose and haven't addressed.",g:"V"},
+    {l:"I've neglected it. Everything else came first.",g:"F"},
+    {l:"It's a stranger. I used to feel at home in it.",g:"I"},
+    {l:"It's a source of discomfort more than confidence.",g:"C"},
+    {l:"It's capable of more than I'm giving it. I just can't seem to stay consistent.",g:"S"}
+  ]},
+  {t:"How is this showing up in your relationships?",o:[
+    {l:"I'm present but not really there. Running on empty by the time people need me.",g:"E"},
+    {l:"My partner and kids are getting a quieter, less engaged version of me.",g:"V"},
+    {l:"I love the people in my life. I just wish I had more of myself to give them.",g:"F"},
+    {l:"I watch others who are still active and feel the gap between where I am and where I was.",g:"I"},
+    {l:"I hold back in my relationship because I don't feel confident in my own skin.",g:"C"},
+    {l:"People know I keep saying I'll get back to it. I've stopped saying it out loud.",g:"S"}
+  ]},
+  {t:"If you could fix one thing tomorrow, what would change?",o:[
+    {l:"I would wake up with real energy. Not manufactured. Just there.",g:"E"},
+    {l:"I would feel like the sharp, capable, driven version of myself I know is still in there.",g:"V"},
+    {l:"I would have something completely mine. Time, energy, a version of myself outside my roles.",g:"F"},
+    {l:"I would feel at home in my body again. Physical. Capable. Like that old photo.",g:"I"},
+    {l:"I would walk into a room feeling genuinely confident in how I look and feel.",g:"C"},
+    {l:"I would trust myself to start something and actually finish it this time.",g:"S"}
+  ]},
+  {t:"What feels like the biggest barrier right now?",o:[
+    {l:"I don't have the energy to fix the thing that's draining my energy.",g:"E"},
+    {l:"I know what I need to do. I just can't find the version of myself that made it automatic.",g:"V"},
+    {l:"I can't justify time for myself when everyone else needs something from me.",g:"F"},
+    {l:"Every time I start I remember how far I am from where I used to be.",g:"I"},
+    {l:"I don't feel good enough about myself right now to show up.",g:"C"},
+    {l:"I don't trust a new program to work any better than the last ten I tried.",g:"S"}
+  ]},
+  {t:"Deep down, what do you most want to feel?",o:[
+    {l:"Restored. Like my body is working with me instead of against me.",g:"E"},
+    {l:"Like myself again. Sharp, present, and in control of my physical life.",g:"V"},
+    {l:"Full. Not just functioning — genuinely fulfilled in my own life.",g:"F"},
+    {l:"Like that version of me I remember. Physical, capable, at home in my body.",g:"I"},
+    {l:"Confident. Genuinely, quietly, unshakeably confident in who I am and how I show up.",g:"C"},
+    {l:"Consistent. Finally. Done with starting over.",g:"S"}
+  ]}
+];
+
+/* ── GAP DATA ───────────────────────────────────────────────────────────── */
+var GAPS={
+  E:{
+    name:'The <span class="gold">Energy</span> Gap',
+    nameText:'The Energy Gap',
+    statement:'\u201cI\u2019m exhausted all the time and I can\u2019t figure out why.\u201d',
+    p1:'You are not lazy. You are not unmotivated. You are running a deficit that has been building long enough that you have stopped noticing it \u2014 except in the moments when it is impossible to ignore. The 3pm wall. The second coffee. The workouts that keep getting pushed to tomorrow.',
+    p2:'Here is what most people never learn: the exhaustion you feel is not the reason you cannot start moving \u2014 it is the <strong>result</strong> of not moving. The loop runs in the opposite direction than you think. Researchers at the University of Georgia found that people who started exercising regularly reduced their fatigue by 65% and increased their energy by 20%. Not after months. Within weeks. Your body is not broken. It is waiting for the one input that actually restores it.',
+    p3:'The Energy Gap closes from the inside out. The Fitness League matches you to a structured training program built around your actual schedule, your goals, and your setup. Alongside your program, you receive personalized habit recommendations designed to directly support your energy \u2014 sleep, hydration, movement, stress. You track them inside the app and watch the data confirm what you start to feel within weeks. The first step is smaller than you think. And the energy follows the moment you take it.',
+    ctaH:'Start moving. The energy follows.',
+    ctaB:'Get matched to your program, receive your personalized habit recommendations, and do your first workout within 24 hours. Seven days completely free \u2014 no credit card required.'
+  },
+  V:{
+    name:'The <span class="gold">Vitality</span> Gap',
+    nameText:'The Vitality Gap',
+    statement:'\u201cI\u2019m still performing everywhere else. But I\u2019m fading \u2014 and I can feel it.\u201d',
+    p1:'You are still showing up. Still performing. Still handling everything that needs handling. But something that used to feel automatic \u2014 the drive, the edge, the physical confidence \u2014 now requires more effort than it should. You have been calling it stress. Or getting older. Or just life. It is none of those things.',
+    p2:'The vitality that is missing is not gone \u2014 it is physiologically suppressed. Research shows that sedentary behavior directly accelerates the hormonal decline most men attribute to aging. Testosterone drops. Energy drops. Drive drops. The loop tightens every year it goes unaddressed. But the same research shows that <strong>consistent resistance training reverses this</strong> \u2014 naturally, measurably, without medical intervention. The version of you that felt sharp and capable was not a younger version. It was an active one.',
+    p3:'The Vitality Gap does not close on its own \u2014 but it closes faster than you think when you give it the right input. The Fitness League matches you to a structured strength program built around your schedule and your goals \u2014 efficient, progressive, designed for someone whose time is real and whose results need to be too. Alongside your training, you receive personalized habit recommendations that directly support hormonal health and recovery. The Fitness League gives you the system to get back to the version of yourself that was fully present.',
+    ctaH:'Get the version of you back that you know is still in there.',
+    ctaB:'Start your free trial. Get matched to your program. Receive your personalized habit recommendations. Do your first workout within 24 hours. Seven days completely free.'
+  },
+  F:{
+    name:'The <span class="gold">Fulfillment</span> Gap',
+    nameText:'The Fulfillment Gap',
+    statement:'\u201cI love my life. But I resent it sometimes. And I feel terrible for feeling that way.\u201d',
+    p1:'You love your people. You love your life, in the broad sense. But underneath the functioning \u2014 underneath the lunches packed and the schedules managed and the patience you perform at the end of days that took everything \u2014 there is something that has been quietly missing. Not from your life. From you. The version of yourself that existed before you became primarily responsible for everyone else\u2019s needs.',
+    p2:'This is not a character flaw. It is what happens when the input-output equation runs at a deficit for long enough. Research from the University of Bath found that mothers carry 71% of the household mental load \u2014 and the documented result is exhaustion, resentment, and emotional distancing from the people they love most. <strong>The resentment you feel is not ingratitude. It is a biological signal.</strong> Your body telling you that you cannot keep giving from an empty account.',
+    p3:'The Fulfillment Gap closes when you reclaim something that is completely and unapologetically yours. The Fitness League matches you to a training program built around your actual schedule \u2014 not the version of your life where you have more time, but the one you are living right now. Alongside your program, you receive personalized habit recommendations designed around what you specifically need to replenish. The combination of consistent movement and habits optimized for your life restores you at the level where the depletion actually lives. Thirty minutes. Your program. Your habits. Your life back.',
+    ctaH:'She\u2019s still in there. Let\u2019s bring her back.',
+    ctaB:'Start your free trial. Get matched to your program. Receive your personalized habit recommendations. Do your first workout within 24 hours. Seven days completely free \u2014 no credit card required.'
+  },
+  I:{
+    name:'The <span class="gold">Identity</span> Gap',
+    nameText:'The Identity Gap',
+    statement:'\u201cI used to be that person. I don\u2019t know where they went.\u201d',
+    p1:'There is a version of you that you remember. Not younger necessarily \u2014 just active. Physical. Genuinely at home in your body. That version had an energy and a confidence that came from somewhere specific. And somewhere between then and now, without a single dramatic moment you could point to, they went quiet.',
+    p2:'Here is what the research on exercise identity shows: that version of you did not disappear. They went dormant. Previously active adults who return to consistent training <strong>reactivate their physical self-concept faster than beginners build one from scratch.</strong> The body remembers. The identity remembers. The distance back is not as far as the years between then and now make it feel. You are not starting from zero. You are returning to something that was already yours.',
+    p3:'The Identity Gap closes one session at a time. The Fitness League matches you to a training program built around your actual life \u2014 your schedule, your equipment, your starting point. No judgment about where you have been. Just a clear path forward from exactly where you are. Alongside your program, you receive personalized habit recommendations that compound your progress and make the identity shift visible in real data before it is visible anywhere else. This time is not different because you are more motivated. It is different because the system was built for your real life.',
+    ctaH:'That version of you isn\u2019t gone. They\u2019re waiting.',
+    ctaB:'Start your free trial. Get matched to your program. Receive your personalized habit recommendations. Do your first workout within 24 hours. Seven days completely free \u2014 no credit card required.'
+  },
+  C:{
+    name:'The <span class="gold">Confidence</span> Gap',
+    nameText:'The Confidence Gap',
+    statement:'\u201cI don\u2019t feel attractive anymore. Not to anyone else \u2014 to myself.\u201d',
+    p1:'This one is quiet. You probably have not said it out loud to anyone. But you feel it \u2014 in how you dress, in how you move through a room, in how you engage in your relationship. The confidence that used to feel automatic has been slowly, quietly draining. And the loss is not about vanity. It is about feeling at home in your own body. That is a different thing entirely.',
+    p2:'Research from the University of British Columbia found that women who trained consistently reported <strong>significant improvements in body confidence almost immediately</strong> \u2014 not after months of visible physical change, but within weeks of starting. The confidence does not come from the results. It comes from the act of consistently showing up for yourself. From doing something that is yours. From the specific, embodied feeling of a body that is being used intentionally rather than just carried through the day.',
+    p3:'The Confidence Gap closes from the inside out. The Fitness League matches you to a training program built around your goals, your schedule, and your life. Not a generic plan designed for someone else\u2019s body or someone else\u2019s time \u2014 something specific to you. Alongside your program, you receive personalized habit recommendations that make the internal shift visible before the external one catches up. You do not need to feel confident to start. You start \u2014 and The Fitness League gives you the structure that makes confidence the result.',
+    ctaH:"You don\u2019t need to feel confident to start. You start \u2014 and confidence follows.",
+    ctaB:'Get matched to your program, receive your personalized habit recommendations, and do your first workout within 24 hours. Seven days completely free \u2014 no credit card required.'
+  },
+  S:{
+    name:'The <span class="gold">Consistency</span> Gap',
+    nameText:'The Consistency Gap',
+    statement:'\u201cI\u2019ve started over so many times I\u2019ve stopped trusting myself.\u201d',
+    p1:'You have started before. More than once. You know what it feels like to be in a good stretch \u2014 to feel the momentum building, to actually believe this time is different. And then something happens. Life interrupts. The habit breaks. The restart comes with a little more self-doubt than the last one. You have stopped counting how many times you have been here.',
+    p2:'Here is the truth that changes everything: every time you stopped was not a failure of discipline. It was a failure of fit. <strong>The program asked for more than your real life could give it</strong> \u2014 more time, more energy, more uninterrupted consistency than a person with your responsibilities can reliably produce. The problem was never you. The system was wrong. And the right system \u2014 one built around your actual week, not your ideal one \u2014 produces a completely different result.',
+    p3:'The Consistency Gap closes when the program finally fits the life \u2014 and The Fitness League was built specifically for that problem. You are matched to a training program based on your actual schedule, your goals, your equipment, and your experience level. Not a template. Something designed to survive the weeks that do not go as planned. Alongside your training, you receive personalized habit recommendations that keep you connected to your progress even on the days the workout does not happen. And if you want accountability that goes beyond tracking \u2014 TFL challenges put your consistency on a live leaderboard with real people, making quitting cost something it never did when you were going it alone.',
+    ctaH:'This time is different \u2014 because the system was built for your real life.',
+    ctaB:'Get matched to your program, receive your personalized habit recommendations, and do your first workout within 24 hours. Seven days completely free \u2014 no credit card required.'
+  }
+};
+
+/* ── STATE ──────────────────────────────────────────────────────────────── */
+var cur=0, answers=new Array(Qs.length).fill(null), firstName='';
+var TOTAL=Qs.length;
+
+/* ── HELPERS ────────────────────────────────────────────────────────────── */
+function show(id){
+  ['s-intro','s-question','s-name','s-loading','s-result'].forEach(function(s){
+    var el=document.getElementById(s);
+    el.style.display='none';
+    el.classList.remove('active');
+  });
+  var el=document.getElementById(id);
+  el.style.display='';
+  el.classList.add('active');
+  window.scrollTo(0,0);
+}
+
+function setPgBar(pct){
+  document.getElementById('pgbar').style.width=pct+'%';
+}
+
+function renderPips(trackId,current,total,allDone){
+  var t=document.getElementById(trackId);
+  t.innerHTML='';
+  for(var i=0;i<total;i++){
+    var p=document.createElement('div');
+    p.className='pip'+(allDone?' done':i<current?' done':i===current?' active':'');
+    t.appendChild(p);
+  }
+}
+
+/* ── RENDER QUESTION ────────────────────────────────────────────────────── */
+function renderQ(){
+  var q=Qs[cur];
+  document.getElementById('q-counter').textContent='Question '+(cur+1)+' of '+TOTAL;
+  document.getElementById('q-text').textContent=q.t;
+  renderPips('pip-track',cur,TOTAL,false);
+  setPgBar(Math.round((cur/TOTAL)*80));
+
+  var opts=document.getElementById('opts');
+  opts.innerHTML='';
+  q.o.forEach(function(o,i){
+    var btn=document.createElement('button');
+    btn.className='opt'+(answers[cur]===i?' selected':'');
+    btn.textContent=o.l;
+    btn.addEventListener('click',function(){
+      answers[cur]=i;
+      document.querySelectorAll('.opt').forEach(function(b){b.classList.remove('selected');});
+      btn.classList.add('selected');
+      document.getElementById('btn-next').classList.add('on');
+    });
+    opts.appendChild(btn);
+  });
+
+  var nextBtn=document.getElementById('btn-next');
+  nextBtn.classList.toggle('on',answers[cur]!==null);
+  document.getElementById('btn-back').style.visibility=cur===0?'hidden':'visible';
+  show('s-question');
+}
+
+/* ── NAV ────────────────────────────────────────────────────────────────── */
+document.getElementById('btn-start').addEventListener('click',function(){
+  cur=0; answers=new Array(TOTAL).fill(null); renderQ();
+});
+
+document.getElementById('btn-next').addEventListener('click',function(){
+  if(answers[cur]===null)return;
+  if(cur<TOTAL-1){cur++;renderQ();}
+  else{
+    renderPips('name-pip-track',TOTAL,TOTAL,true);
+    setPgBar(90);
+    show('s-name');
+  }
+});
+
+document.getElementById('btn-back').addEventListener('click',function(){
+  if(cur>0){cur--;renderQ();}else{show('s-intro');}
+});
+
+document.getElementById('name-back').addEventListener('click',function(){
+  cur=TOTAL-1;renderQ();
+});
+
+/* ── NAME ───────────────────────────────────────────────────────────────── */
+document.getElementById('name-input').addEventListener('input',function(){
+  firstName=this.value.trim();
+  document.getElementById('btn-reveal').classList.toggle('on',firstName.length>0);
+});
+document.getElementById('name-input').addEventListener('keydown',function(e){
+  if(e.key==='Enter'&&firstName.length>0)revealResult();
+});
+document.getElementById('btn-reveal').addEventListener('click',function(){
+  if(firstName.length>0)revealResult();
+});
+
+/* ── CALCULATE ──────────────────────────────────────────────────────────── */
+function calcGap(){
+  var sc={E:0,V:0,F:0,I:0,C:0,S:0};
+  answers.forEach(function(a,qi){
+    if(a!==null)sc[Qs[qi].o[a].g]++;
+  });
+  // Q1 is tiebreaker
+  var q1gap=Qs[0].o[answers[0]||0].g;
+  var best=q1gap, bestScore=0;
+  Object.keys(sc).forEach(function(k){
+    if(sc[k]>bestScore){bestScore=sc[k];best=k;}
+  });
+  return best;
+}
+
+/* ── RESULT ─────────────────────────────────────────────────────────────── */
+function revealResult(){
+  show('s-loading');
+  setPgBar(95);
+  setTimeout(function(){
+    var key=calcGap();
+    var g=GAPS[key];
+    var name=firstName.charAt(0).toUpperCase()+firstName.slice(1);
+    document.getElementById('r-greeting').textContent='Hey '+name+',';
+    document.getElementById('r-gap-name').innerHTML=g.name;
+    document.getElementById('r-statement').textContent=g.statement;
+    document.getElementById('r-p1').textContent=g.p1;
+    document.getElementById('r-p2').innerHTML=g.p2;
+    document.getElementById('r-p3').textContent=g.p3;
+    document.getElementById('r-cta-h').textContent=g.ctaH;
+    document.getElementById('r-cta-b').textContent=g.ctaB;
+    setPgBar(100);
+    show('s-result');
+
+    // Meta pixel
+    if(typeof fbq!=='undefined'){
+      fbq('trackCustom','GapIdentified',{gap:g.nameText,name:name});
+    }
+  },2000);
+}
+
+})();
+
+/* ── META PIXEL ─────────────────────────────────────────────────────────── */
+!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
+fbq('init','4176336189248358');
+fbq('track','PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=4176336189248358&ev=PageView&noscript=1"/></noscript>
+</body>
+</html>
